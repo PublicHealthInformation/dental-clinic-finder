@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Find a Dental Clinic</title>
+<style>
+  :root {
+    --ink: #18323b; --muted: #52666d; --line: #d9e3e5;
+    --bg: #f4f8f8; --card: #ffffff; --brand: #176b68; --brand-dark: #10514f;
+    --soft: #e6f3f1; --focus: #f2c94c;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: transparent; color: var(--ink); font: 16px/1.5 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+  .wrap { max-width: 980px; margin: 0 auto; }
+  .panel { background: var(--bg); border: 1px solid var(--line); border-radius: 20px; padding: clamp(18px, 4vw, 32px); }
+  h1 { margin: 0 0 8px; font-size: clamp(1.65rem, 4vw, 2.2rem); line-height: 1.15; letter-spacing: -.025em; }
+  .intro { color: var(--muted); margin: 0 0 22px; max-width: 66ch; }
+  .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .field { min-width: 0; }
+  label, legend { display: block; font-weight: 700; margin: 0 0 7px; font-size: .95rem; }
+  input, select { width: 100%; min-height: 46px; border: 1px solid #aebfc3; border-radius: 10px; background: white; color: var(--ink); padding: 10px 12px; font: inherit; }
+  input:focus, select:focus, button:focus-visible, a:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+  .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
+  button { min-height: 46px; border: 0; border-radius: 10px; padding: 11px 18px; font: inherit; font-weight: 750; cursor: pointer; }
+  .primary { background: var(--brand); color: white; }
+  .primary:hover { background: var(--brand-dark); }
+  .secondary { background: white; border: 1px solid var(--line); color: var(--ink); }
+  .small-note { margin: 14px 0 0; color: var(--muted); font-size: .85rem; }
+  .results-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 26px 0 12px; flex-wrap: wrap; }
+  .results-head h2 { margin: 0; font-size: 1.25rem; }
+  #count { color: var(--muted); font-size: .9rem; }
+  .results { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+  .clinic { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px; min-width: 0; }
+  .clinic h3 { margin: 0 0 6px; font-size: 1.1rem; line-height: 1.3; }
+  .clinic p { margin: 7px 0; color: var(--muted); font-size: .94rem; overflow-wrap: anywhere; }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0; }
+  .tag { border-radius: 999px; background: var(--soft); color: #174e4c; padding: 4px 9px; font-size: .78rem; font-weight: 700; }
+  .clinic-links { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 13px; }
+  a { color: var(--brand-dark); font-weight: 750; text-underline-offset: 3px; }
+  .empty { background: white; border: 1px dashed #aebfc3; border-radius: 14px; padding: 20px; color: var(--muted); }
+  .notice { margin-top: 16px; padding: 12px 14px; background: #fff8df; border: 1px solid #ead88f; border-radius: 10px; color: #594b16; font-size: .87rem; }
+  .hidden { display: none !important; }
+  @media (max-width: 650px) {
+    .form-grid, .results { grid-template-columns: 1fr; }
+    .actions button { width: 100%; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="panel" aria-labelledby="page-title">
+    <h1 id="page-title">Find a Dental Clinic Near You</h1>
+    <p class="intro">Search for dental care by ZIP code, the type of care you need, and your insurance or payment situation. Contact clinics directly to confirm services, costs, and appointment availability.</p>
+
+    <form id="search-form">
+      <div class="form-grid">
+        <div class="field">
+          <label for="zip">ZIP code</label>
+          <input id="zip" name="zip" inputmode="numeric" autocomplete="postal-code" pattern="[0-9]{5}" maxlength="5" placeholder="Enter 5-digit ZIP code" required>
+        </div>
+        <div class="field">
+          <label for="patient">Who needs care?</label>
+          <select id="patient" name="patient">
+            <option value="any">Anyone / entire family</option>
+            <option value="child">Child</option>
+            <option value="adult">Adult</option>
+            <option value="older-adult">Older adult</option>
+            <option value="pregnancy">Pregnancy-related dental care</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="payment">Insurance or payment</label>
+          <select id="payment" name="payment">
+            <option value="any">Show all options</option>
+            <option value="medi-cal">Medi-Cal Dental</option>
+            <option value="private">Private dental insurance</option>
+            <option value="uninsured">No insurance / reduced-cost care</option>
+            <option value="unknown">Not sure</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="service">Type of dental care</label>
+          <select id="service" name="service">
+            <option value="any">Any dental care</option>
+            <option value="checkup">Checkup and cleaning</option>
+            <option value="urgent">Tooth pain or urgent dental care</option>
+            <option value="children">Children's dental care</option>
+            <option value="pregnancy">Dental care during pregnancy</option>
+            <option value="restorative">Fillings / restorative care</option>
+          </select>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="primary" type="submit">Find clinics</button>
+        <button class="secondary" type="reset">Clear filters</button>
+      </div>
+      <p class="small-note">Your ZIP code is used to match listings in the clinic directory configured for this page.</p>
+    </form>
+
+    <div class="results-head">
+      <h2 id="results-title">Clinic results</h2>
+      <span id="count" aria-live="polite">Enter a ZIP code to search.</span>
+    </div>
+    <div id="results" class="results" aria-live="polite">
+      <div class="empty">Once verified clinic listings are added to the directory, matching clinics will appear here.</div>
+    </div>
+
+    <div class="notice"><strong>Important:</strong> This starter widget does not include a live clinic database. Before publishing, add verified clinic listings and confirm each clinic's address, phone number, services, insurance acceptance, and reduced-cost options. If someone has a medical emergency, they should call emergency services or go to an emergency department.</div>
+  </section>
+</div>
+
+<script>
+/*
+  CLINIC DIRECTORY SETUP
+  ----------------------
+  Replace the empty array below with verified clinic records.
+  Do not publish sample or unverified clinic details.
+
+  Example record (replace every value with verified information):
+  {
+    name: "Verified Clinic Name",
+    address: "123 Main St, City, CA 90000",
+    zip: "90000",
+    phone: "555-555-0100",
+    website: "https://clinic.example",
+    directions: "https://www.google.com/maps/search/?api=1&query=123%20Main%20St",
+    patients: ["child", "adult", "older-adult", "pregnancy"],
+    payments: ["medi-cal", "private", "uninsured"],
+    services: ["checkup", "urgent", "children", "pregnancy", "restorative"],
+    notes: "Call to confirm current availability and costs."
+  }
+
+  patients values: child, adult, older-adult, pregnancy
+  payments values: medi-cal, private, uninsured, unknown
+  services values: checkup, urgent, children, pregnancy, restorative
+*/
+const CLINICS = [];
+
+const form = document.getElementById("search-form");
+const results = document.getElementById("results");
+const count = document.getElementById("count");
+
+function safeUrl(value) {
+  try {
+    const url = new URL(value);
+    return ["http:", "https:"].includes(url.protocol) ? url.href : "";
+  } catch (_) { return ""; }
+}
+function escapeHtml(value) {
+  return String(value ?? "").replace(/[&<>"']/g, c => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  }[c]));
+}
+function matches(clinic, filters) {
+  const zipMatch = String(clinic.zip || "").startsWith(filters.zip);
+  const patientMatch = filters.patient === "any" ||
+    (clinic.patients || []).includes(filters.patient) ||
+    (filters.patient === "child" && (clinic.patients || []).includes("children"));
+  const paymentMatch = filters.payment === "any" || filters.payment === "unknown" ||
+    (clinic.payments || []).includes(filters.payment);
+  const serviceMap = { children: "children", pregnancy: "pregnancy" };
+  const requestedService = serviceMap[filters.service] || filters.service;
+  const serviceMatch = filters.service === "any" || (clinic.services || []).includes(requestedService);
+  return zipMatch && patientMatch && paymentMatch && serviceMatch;
+}
+function renderClinic(c) {
+  const website = safeUrl(c.website);
+  const directions = safeUrl(c.directions);
+  const tags = [
+    ...(c.payments || []).map(p => ({
+      "medi-cal": "Medi-Cal Dental", "private": "Private insurance",
+      "uninsured": "Reduced-cost / uninsured", "unknown": "Payment details: call"
+    }[p] || p)),
+    ...(c.services || []).map(s => ({
+      checkup: "Checkups & cleanings", urgent: "Urgent care", children: "Children",
+      pregnancy: "Pregnancy care", restorative: "Restorative care"
+    }[s] || s))
+  ];
+  return `<article class="clinic">
+    <h3>${escapeHtml(c.name)}</h3>
+    <p>${escapeHtml(c.address)}</p>
+    ${c.phone ? `<p><strong>Phone:</strong> ${escapeHtml(c.phone)}</p>` : ""}
+    <div class="tags">${tags.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join("")}</div>
+    ${c.notes ? `<p>${escapeHtml(c.notes)}</p>` : ""}
+    <div class="clinic-links">
+      ${c.phone ? `<a href="tel:${escapeHtml(c.phone.replace(/[^0-9+]/g, ""))}">Call clinic</a>` : ""}
+      ${directions ? `<a href="${escapeHtml(directions)}" target="_blank" rel="noopener noreferrer">Directions</a>` : ""}
+      ${website ? `<a href="${escapeHtml(website)}" target="_blank" rel="noopener noreferrer">Official website</a>` : ""}
+    </div>
+  </article>`;
+}
+form.addEventListener("submit", event => {
+  event.preventDefault();
+  const zip = document.getElementById("zip").value.trim();
+  if (!/^\d{5}$/.test(zip)) {
+    count.textContent = "Please enter a valid 5-digit ZIP code.";
+    return;
+  }
+  const filters = {
+    zip,
+    patient: document.getElementById("patient").value,
+    payment: document.getElementById("payment").value,
+    service: document.getElementById("service").value
+  };
+  const found = CLINICS.filter(c => matches(c, filters));
+  count.textContent = `${found.length} ${found.length === 1 ? "clinic" : "clinics"} found in the configured directory.`;
+  results.innerHTML = found.length
+    ? found.map(renderClinic).join("")
+    : `<div class="empty">${CLINICS.length
+        ? "No matching clinics were found in this directory. Try changing your filters or search another ZIP code."
+        : "The clinic directory has not been configured yet. Add verified clinic listings to the CLINICS array in this file before publishing."}</div>`;
+});
+form.addEventListener("reset", () => {
+  setTimeout(() => {
+    count.textContent = "Enter a ZIP code to search.";
+    results.innerHTML = '<div class="empty">Once verified clinic listings are added to the directory, matching clinics will appear here.</div>';
+  }, 0);
+});
+</script>
+</body>
+</html>
